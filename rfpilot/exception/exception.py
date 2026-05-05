@@ -1,6 +1,6 @@
 import sys
 from rfpilot.logging.logger import logging
-class NetworkSecurityException(Exception):
+class RfpilotException(Exception):
 
     def __init__(self, error_message:str, error_details:sys):
         self.error_message = error_message
@@ -21,4 +21,4 @@ class NetworkSecurityException(Exception):
 #         logging.info("Entered try block")
 #         a = 10 / 0
 #     except Exception as e:
-#         raise NetworkSecurityException(e, sys)
+#         raise RfpilotException(e, sys)
