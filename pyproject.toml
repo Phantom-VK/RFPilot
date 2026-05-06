@@ -6,7 +6,11 @@ dependencies = [
     "docling>=2.92.0",
     "docling-core>=2.74.1",
     "onnxruntime-gpu>=1.25.1",
+    "openai>=2.34.0",
+    "openai-agents>=0.15.3",
     "opencv-python>=4.13.0.92",
+    "pydantic-settings>=2.14.0",
     "pymupdf>=1.27.2.3",
+    "python-dotenv>=1.2.2",
     "torch>=2.11.0",
 ]
