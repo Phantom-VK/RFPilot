@@ -1,9 +1,17 @@
+"""Helper functions for splitting markdown RFP documents into chunks."""
+
 import logging
 import re
 
 from rfpilot.chunker.model import DocumentChunk
-from rfpilot.chunker.regex_patterns import _IMAGE_TAG_PATTERN, _HEADING_PATTERN, _TABLE_PATTERN, _QA_SPLIT_PATTERN, \
-    _QA_NUM_PATTERN, _CODE_FENCE_PATTERN
+from rfpilot.chunker.regex_patterns import (
+    _CODE_FENCE_PATTERN,
+    _HEADING_PATTERN,
+    _IMAGE_TAG_PATTERN,
+    _QA_NUM_PATTERN,
+    _QA_SPLIT_PATTERN,
+    _TABLE_PATTERN,
+)
 
 
 def _load_and_clean_markdown(markdown_file: str) -> str:
@@ -11,7 +19,11 @@ def _load_and_clean_markdown(markdown_file: str) -> str:
     with open(markdown_file, "r", encoding="utf-8") as f:
         content = f.read()
     cleaned = _IMAGE_TAG_PATTERN.sub("", content).strip()
-    logging.debug(f"[Chunker] Loaded {len(content)} chars, {len(cleaned)} after cleanup")
+    logging.debug(
+        "[Chunker] Loaded %s chars, %s after cleanup",
+        len(content),
+        len(cleaned),
+    )
     return cleaned
 
 
@@ -43,6 +55,7 @@ def _split_into_sections(markdown: str) -> list[tuple[str, str]]:
     return result
 
 
+# pylint: disable-next=too-many-locals
 def _chunk_section(
     body: str,
     section_title: str,
@@ -69,7 +82,9 @@ def _chunk_section(
 
     if code_blocks:
         logging.debug(
-            f"[Chunker] Section '{section_title}': found {len(code_blocks)} code block(s)"
+            "[Chunker] Section '%s': found %s code block(s)",
+            section_title,
+            len(code_blocks),
         )
         for i, code in enumerate(code_blocks):
             chunks.append(DocumentChunk(
@@ -88,7 +103,7 @@ def _chunk_section(
 
     # Markdown table
     if "|" in body and _TABLE_PATTERN.search(body):
-        logging.debug(f"[Chunker] Section '{section_title}': strategy=table_block")
+        logging.debug("[Chunker] Section '%s': strategy=table_block", section_title)
         chunks.append(DocumentChunk(
             chunk_index=chunk_index,
             section=section_title,
@@ -103,14 +118,16 @@ def _chunk_section(
 
     if len(qa_items) > 1:
         logging.debug(
-            f"[Chunker] Section '{section_title}': strategy=qa_block | "
-            f"{len(qa_items)} items, group_size={qa_group_size}"
+            "[Chunker] Section '%s': strategy=qa_block | %s items, group_size=%s",
+            section_title,
+            len(qa_items),
+            qa_group_size,
         )
         for i in range(0, len(qa_items), qa_group_size):
             group = qa_items[i: i + qa_group_size]
             content = "\n\n".join(group)
             q_nums = _QA_NUM_PATTERN.findall("\n".join(group))
-            label = f"Q{q_nums[0]}-Q{q_nums[-1]}" if len(q_nums) > 1 else (f"Q{q_nums[0]}" if q_nums else f"group_{i}")
+            label = _build_qa_label(q_nums, i)
 
             chunks.append(DocumentChunk(
                 chunk_index=chunk_index,
@@ -125,8 +142,10 @@ def _chunk_section(
     # Large prose — paragraph split with 1-paragraph overlap
     if len(body) > max_chunk_size:
         logging.debug(
-            f"[Chunker] Section '{section_title}': strategy=prose_chunk | "
-            f"{len(body)} chars exceeds limit={max_chunk_size}"
+            "[Chunker] Section '%s': strategy=prose_chunk | %s chars exceeds limit=%s",
+            section_title,
+            len(body),
+            max_chunk_size,
         )
         prose_chunks, chunk_index = _split_large_prose(
             body=body,
@@ -138,7 +157,11 @@ def _chunk_section(
         return chunks, chunk_index
 
     # Small prose — single chunk
-    logging.debug(f"[Chunker] Section '{section_title}': strategy=prose (full, {len(body)} chars)")
+    logging.debug(
+        "[Chunker] Section '%s': strategy=prose (full, %s chars)",
+        section_title,
+        len(body),
+    )
     chunks.append(DocumentChunk(
         chunk_index=chunk_index,
         section=section_title,
@@ -147,6 +170,15 @@ def _chunk_section(
         content=body,
     ))
     return chunks, chunk_index + 1
+
+
+def _build_qa_label(q_nums: list[str], group_index: int) -> str:
+    """Create a compact label for a grouped Q&A chunk."""
+    if len(q_nums) > 1:
+        return f"Q{q_nums[0]}-Q{q_nums[-1]}"
+    if q_nums:
+        return f"Q{q_nums[0]}"
+    return f"group_{group_index}"
 
 
 def _extract_code_blocks(body: str) -> tuple[list[str], str]:
@@ -193,8 +225,10 @@ def _split_large_prose(
                 has_overlap=is_overlap_chunk,
             ))
             logging.debug(
-                f"[Chunker] prose_chunk part_{part_index} | {len(chunk_content)} chars | "
-                f"overlap={is_overlap_chunk}"
+                "[Chunker] prose_chunk part_%s | %s chars | overlap=%s",
+                part_index,
+                len(chunk_content),
+                is_overlap_chunk,
             )
             chunk_index += 1
             part_index += 1
@@ -220,7 +254,9 @@ def _split_large_prose(
             has_overlap=is_overlap_chunk,
         ))
         logging.debug(
-            f"[Chunker] prose_chunk part_{part_index} (final) | {len(chunk_content)} chars"
+            "[Chunker] prose_chunk part_%s (final) | %s chars",
+            part_index,
+            len(chunk_content),
         )
         chunk_index += 1
 
@@ -240,7 +276,7 @@ def _merge_tiny_chunks(chunks: list[DocumentChunk], min_chunk_size: int) -> list
 
     # qa_block and table_block carry structured meaning — merging them into prose
     # destroys the semantic boundary the LLM relies on for field extraction.
-    NEVER_MERGE = {"table_block", "code_block", "qa_block"}
+    never_merge = {"table_block", "code_block", "qa_block"}
     merged: list[DocumentChunk] = [chunks[0]]
 
     for current in chunks[1:]:
@@ -248,15 +284,17 @@ def _merge_tiny_chunks(chunks: list[DocumentChunk], min_chunk_size: int) -> list
 
         should_merge = (
             current.char_count < min_chunk_size
-            and current.type not in NEVER_MERGE
-            and prev.type not in NEVER_MERGE
+            and current.type not in never_merge
+            and prev.type not in never_merge
         )
 
         if should_merge:
             logging.warning(
-                f"[Chunker] Merging tiny chunk [{current.chunk_index}] "
-                f"('{current.section}', {current.char_count} chars) "
-                f"into chunk [{prev.chunk_index}]"
+                "[Chunker] Merging tiny chunk [%s] ('%s', %s chars) into chunk [%s]",
+                current.chunk_index,
+                current.section,
+                current.char_count,
+                prev.chunk_index,
             )
             merged[-1] = DocumentChunk(
                 chunk_index=prev.chunk_index,
@@ -275,8 +313,9 @@ def _merge_tiny_chunks(chunks: list[DocumentChunk], min_chunk_size: int) -> list
 
     if len(merged) < len(chunks):
         logging.info(
-            f"[Chunker] Merged {len(chunks) - len(merged)} tiny chunk(s). "
-            f"Final count: {len(merged)}"
+            "[Chunker] Merged %s tiny chunk(s). Final count: %s",
+            len(chunks) - len(merged),
+            len(merged),
         )
 
     return merged

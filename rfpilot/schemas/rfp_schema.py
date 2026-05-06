@@ -1,11 +1,14 @@
+"""Pydantic schema for extracted RFP fields."""
+
 from __future__ import annotations
 
 from typing import Any, Optional
 
+# pylint: disable=import-error
 from pydantic import BaseModel, ConfigDict
 
 
-class RFPExtraction(BaseModel):
+class RFPExtraction(BaseModel):  # pylint: disable=too-few-public-methods
     """Structured extraction output for an RFP document set."""
 
     model_config = ConfigDict(extra="ignore")
