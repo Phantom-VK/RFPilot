@@ -17,13 +17,13 @@ def save_file(
     """
     Generic file saver supporting text, JSON, and binary content.
 
-    Args:
+    :param:
         content: str | dict | list | bytes
         input_file: original file path (used for naming)
         extension: desired output extension (e.g., 'txt', 'json', 'md', 'bin')
         subdir: output folder inside project
 
-    Returns:
+    :return:
         str: full path of saved file
     """
 
