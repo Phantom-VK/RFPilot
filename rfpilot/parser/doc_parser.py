@@ -1,6 +1,9 @@
+"""Document parsing utilities built on Docling."""
+
 import os
 import sys
 
+# pylint: disable=import-error
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions, RapidOcrOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption, HTMLFormatOption
@@ -12,6 +15,7 @@ from rfpilot.utils.file_utils import save_file
 
 
 def get_converter():
+    """Create a Docling converter configured for OCR-enabled PDF and HTML parsing."""
     # PDF Configuration (OCR Enabled)
     pdf_options = PdfPipelineOptions()
     pdf_options.do_ocr = True
@@ -38,7 +42,7 @@ def perform_intelligent_parsing(file_path):
     Universal function for PDF and HTML.
     Automatically detects file type and applies the correct pipeline.
     """
-    logging.info(f"Starting Intelligent Parsing for: {os.path.basename(file_path)}")
+    logging.info("Starting Intelligent Parsing for: %s", os.path.basename(file_path))
 
     if not os.path.exists(file_path):
         raise FileNotFoundError(file_path)
@@ -52,15 +56,16 @@ def perform_intelligent_parsing(file_path):
         logging.info("Document successfully converted to structured markdown.")
         return markdown_data
 
-    except Exception as e:
-        logging.error(f"Docling conversion failed: {str(e)}")
-        raise RfpilotException(e, sys)
+    except Exception as exc:
+        logging.error("Docling conversion failed: %s", exc)
+        raise RfpilotException(exc, sys) from exc
 
 
 if __name__ == "__main__":
     input_file = os.path.join(
         PROJECT_ROOT,
-        "docs/test_docs/Bid2/Dell Laptops w_Extended Warranty - Bid Information - {3} _ BidNet Direct.html"
+        "docs/test_docs/Bid2/"
+        "Dell Laptops w_Extended Warranty - Bid Information - {3} _ BidNet Direct.html",
     )
 
     try:
@@ -68,5 +73,5 @@ if __name__ == "__main__":
         output_file = save_file(content=data, input_file=input_file, extension=".md")
         print(f"Extraction Complete! Saved at: {output_file}")
 
-    except Exception as e:
-        print(f"Error in workflow: {e}")
+    except Exception as err:  # pylint: disable=broad-exception-caught
+        print(f"Error in workflow: {err}")

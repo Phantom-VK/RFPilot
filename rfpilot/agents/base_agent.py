@@ -1,3 +1,6 @@
+"""Shared agent configuration for RFPilot extraction agents."""
+
+# pylint: disable=import-error
 from agents import ModelSettings
 
 from rfpilot.config.settings import settings

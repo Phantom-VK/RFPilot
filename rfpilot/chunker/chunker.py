@@ -1,8 +1,14 @@
+"""Chunk markdown RFP documents into LLM-friendly document chunks."""
+
 import os
 import sys
 
-from rfpilot.chunker.chunker_helpers import _load_and_clean_markdown, _split_into_sections, _chunk_section, \
-    _merge_tiny_chunks
+from rfpilot.chunker.chunker_helpers import (
+    _chunk_section,
+    _load_and_clean_markdown,
+    _merge_tiny_chunks,
+    _split_into_sections,
+)
 from rfpilot.chunker.index_builder import build_section_index
 from rfpilot.chunker.model import DocumentChunk
 from rfpilot.config.constants import PROJECT_ROOT
@@ -41,30 +47,37 @@ def smart_rfp_chunker(
         RfpilotException: Wraps any IO or parsing error with file and section context.
     """
     logging.info(
-        f"[Chunker] Starting | file='{markdown_file}' | "
-        f"max_chunk_size={max_chunk_size} | min_chunk_size={min_chunk_size} | "
-        f"qa_group_size={qa_group_size}"
+        "[Chunker] Starting | file='%s' | max_chunk_size=%s | "
+        "min_chunk_size=%s | qa_group_size=%s",
+        markdown_file,
+        max_chunk_size,
+        min_chunk_size,
+        qa_group_size,
     )
 
     try:
         markdown = _load_and_clean_markdown(markdown_file)
-    except Exception as e:
+    except Exception as exc:
         raise RfpilotException(
-            f"[Chunker] Failed to read file '{markdown_file}': {e}", sys
-        )
+            f"[Chunker] Failed to read file '{markdown_file}': {exc}", sys
+        ) from exc
 
     sections = _split_into_sections(markdown)
-    logging.info(f"[Chunker] Split into {len(sections)} heading-based section(s)")
+    logging.info("[Chunker] Split into %s heading-based section(s)", len(sections))
 
     chunks: list[DocumentChunk] = []
     chunk_index = 0
 
     for section_title, body in sections:
         if not body:
-            logging.debug(f"[Chunker] Skipping empty section: '{section_title}'")
+            logging.debug("[Chunker] Skipping empty section: '%s'", section_title)
             continue
 
-        logging.debug(f"[Chunker] Processing section: '{section_title}' ({len(body)} chars)")
+        logging.debug(
+            "[Chunker] Processing section: '%s' (%s chars)",
+            section_title,
+            len(body),
+        )
 
         try:
             new_chunks, chunk_index = _chunk_section(
@@ -74,10 +87,12 @@ def smart_rfp_chunker(
                 max_chunk_size=max_chunk_size,
                 qa_group_size=qa_group_size,
             )
-        except Exception as e:
+        except Exception as exc:
             raise RfpilotException(
-                f"[Chunker] Error processing section '{section_title}' in '{markdown_file}': {e}", sys
-            )
+                f"[Chunker] Error processing section '{section_title}' "
+                f"in '{markdown_file}': {exc}",
+                sys,
+            ) from exc
 
         chunks.extend(new_chunks)
 
@@ -85,9 +100,12 @@ def smart_rfp_chunker(
     chunks = _merge_tiny_chunks(chunks, min_chunk_size)
 
     logging.info(
-        f"[Chunker] Done | file='{markdown_file}' | total_chunks={len(chunks)}"
+        "[Chunker] Done | file='%s' | total_chunks=%s",
+        markdown_file,
+        len(chunks),
     )
     return chunks
+
 
 if __name__ == "__main__":
     input_file = os.path.join(
@@ -95,16 +113,16 @@ if __name__ == "__main__":
         "output/Dell_Laptop_Specs.md"
     )
 
-    chunks = smart_rfp_chunker(
+    sample_chunks = smart_rfp_chunker(
         markdown_file=input_file,
         max_chunk_size=2000,
         min_chunk_size=100,
         qa_group_size=2,
     )
 
-    index = build_section_index(chunks)
-    print(index)
+    SECTION_INDEX = build_section_index(sample_chunks)
+    print(SECTION_INDEX)
     print("\n" + "=" * 60 + "\n")
 
-    data = [{chunk.chunk_index: chunk.to_prompt_string()} for chunk in chunks]
+    data = [{chunk.chunk_index: chunk.to_prompt_string()} for chunk in sample_chunks]
     save_file(data, "chunked" + input_file, extension=".json")

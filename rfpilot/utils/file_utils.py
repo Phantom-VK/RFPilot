@@ -1,6 +1,8 @@
+"""File persistence helpers for generated parser and extraction outputs."""
+
+import json
 import os
 import sys
-import json
 from typing import Union
 
 from rfpilot.config.constants import PROJECT_ROOT
@@ -12,7 +14,7 @@ def save_file(
     content: Union[str, dict, list, bytes],
     input_file: str,
     extension: str = "txt",
-    subdir: str = "output"
+    subdir: str = "output",
 ) -> str:
     """
     Generic file saver supporting text, JSON, and binary content.
@@ -63,9 +65,9 @@ def save_file(
 
                 f.write(content)
 
-        logging.info(f"File saved successfully at: {final_path}")
+        logging.info("File saved successfully at: %s", final_path)
         return final_path
 
-    except Exception as e:
-        logging.error(f"Failed to save file: {str(e)}")
-        raise RfpilotException(e, sys)
+    except Exception as exc:
+        logging.error("Failed to save file: %s", exc)
+        raise RfpilotException(exc, sys) from exc
