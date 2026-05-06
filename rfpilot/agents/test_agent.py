@@ -1,7 +1,11 @@
 from agents import Agent
 
 from rfpilot.config.settings import settings
-from rfpilot.prompts.agent_instructions import TEST_AGENT_INSTRTUCTIONS
+
+TEST_AGENT_INSTRTUCTIONS = """
+You are a test agent, just to test LLM model configurations.
+
+"""
 
 test_agent = Agent(
         name="Test agent",
