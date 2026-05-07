@@ -1,6 +1,5 @@
 """Cross-document consolidation agent for RFP and addendum results."""
 
-# pylint: disable=import-error
 from agents import Agent
 
 from rfpilot.agents.base_agent import AGENT_DEFAULTS, MERGE_MODEL_SETTINGS

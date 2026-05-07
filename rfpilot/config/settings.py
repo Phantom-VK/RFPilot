@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class Settings(BaseSettings):  # pylint: disable=too-few-public-methods
+class Settings(BaseSettings):
     """Runtime settings for API credentials and pipeline limits."""
 
     DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY")

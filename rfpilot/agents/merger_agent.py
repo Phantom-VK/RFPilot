@@ -1,6 +1,5 @@
 """Document-level reducer agent for partial RFP extractions."""
 
-# pylint: disable=import-error
 from agents import Agent
 
 from rfpilot.agents.base_agent import AGENT_DEFAULTS, MERGE_MODEL_SETTINGS

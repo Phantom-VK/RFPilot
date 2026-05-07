@@ -1,6 +1,5 @@
 """DeepSeek OpenAI-compatible client initialization."""
 
-# pylint: disable=import-error
 from openai import AsyncOpenAI
 from agents import set_default_openai_client, set_default_openai_api, set_tracing_disabled
 

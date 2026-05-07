@@ -8,7 +8,7 @@ from typing import Any, Optional
 from pydantic import BaseModel, ConfigDict
 
 
-class RFPExtraction(BaseModel):  # pylint: disable=too-few-public-methods
+class RFPExtraction(BaseModel):
     """Structured extraction output for an RFP document set."""
 
     model_config = ConfigDict(extra="ignore")

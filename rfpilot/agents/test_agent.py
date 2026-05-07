@@ -1,6 +1,5 @@
 """Test agent used to verify LLM configuration."""
 
-# pylint: disable=import-error
 from agents import Agent
 
 from rfpilot.config.settings import settings
