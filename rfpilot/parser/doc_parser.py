@@ -64,8 +64,7 @@ def perform_intelligent_parsing(file_path):
 if __name__ == "__main__":
     input_file = os.path.join(
         PROJECT_ROOT,
-        "docs/test_docs/Bid2/"
-        "Dell Laptops w_Extended Warranty - Bid Information - {3} _ BidNet Direct.html",
+        "docs/test_docs/Bid1/JA-207652 Student and Staff Computing Devices FINAL.pdf",
     )
 
     try:

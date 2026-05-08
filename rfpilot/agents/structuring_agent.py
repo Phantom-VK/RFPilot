@@ -1,5 +1,7 @@
 """Chunk-level RFP extraction agent."""
 
+# pylint: disable=import-error
+
 from agents import Agent
 
 from rfpilot.agents.base_agent import AGENT_DEFAULTS, EXTRACTION_MODEL_SETTINGS
@@ -30,9 +32,10 @@ RFP_FIELD_NAMES = [
 
 STRUCTURING_AGENT_INSTRUCTIONS = f"""
 You are an RFP data extraction specialist.
-You will receive ONE chunk of an RFP document labeled with its section, type, and index.
-Extract ONLY the fields you can find in this chunk.
-For fields not present in this chunk, return null.
+You will receive one small batch containing one or more chunks of an RFP document.
+Each chunk is labeled with its section, type, and index.
+Extract ONLY the fields you can find in the provided chunk batch.
+For fields not present in the chunk batch, return null.
 Never hallucinate values. Return a valid JSON object with exactly these keys: {RFP_FIELD_NAMES}.
 Dates must be returned as written. Do not add commentary.
 
