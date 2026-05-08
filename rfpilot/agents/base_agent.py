@@ -7,7 +7,10 @@ from rfpilot.config.settings import settings
 
 AGENT_DEFAULTS = {"model": settings.DEEPSEEK_MODEL}
 
-JSON_MODE_RESPONSE_FORMAT = {"response_format": {"type": "json_object"}}
+JSON_MODE_RESPONSE_FORMAT = {
+         "response_format": {"type": "json_object"},
+         "thinking": {"type": "disabled"},
+     }
 
 EXTRACTION_MODEL_SETTINGS = ModelSettings(
     temperature=0,
@@ -19,6 +22,6 @@ EXTRACTION_MODEL_SETTINGS = ModelSettings(
 MERGE_MODEL_SETTINGS = ModelSettings(
     temperature=0,
     top_p=1,
-    max_tokens=4000,
+    max_tokens=1800,
     extra_body=JSON_MODE_RESPONSE_FORMAT,
 )
