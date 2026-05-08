@@ -1,5 +1,3 @@
-"""Run a focused map/reduce extraction smoke test."""
-
 import asyncio
 import json
 from pathlib import Path
@@ -19,7 +17,6 @@ OUTPUT_DIR = Path(PROJECT_ROOT) / "output" / "map_reduced"
 
 
 async def run_map_reduce_test() -> dict:
-    """Map/reduce the configured sample RFP markdown file."""
     semaphore = asyncio.Semaphore(settings.MAX_CONCURRENCY)
 
     return await process_single_file(
