@@ -1,5 +1,7 @@
 """Shared agent configuration for RFPilot extraction agents."""
 
+# pylint: disable=import-error
+
 from agents import ModelSettings
 
 from rfpilot.config.settings import settings
@@ -8,9 +10,9 @@ from rfpilot.config.settings import settings
 AGENT_DEFAULTS = {"model": settings.DEEPSEEK_MODEL}
 
 JSON_MODE_RESPONSE_FORMAT = {
-         "response_format": {"type": "json_object"},
-         "thinking": {"type": "disabled"},
-     }
+    "response_format": {"type": "json_object"},
+    "thinking": {"type": "disabled"},
+}
 
 EXTRACTION_MODEL_SETTINGS = ModelSettings(
     temperature=0,
@@ -22,6 +24,6 @@ EXTRACTION_MODEL_SETTINGS = ModelSettings(
 MERGE_MODEL_SETTINGS = ModelSettings(
     temperature=0,
     top_p=1,
-    max_tokens=1800,
+    max_tokens=2500,
     extra_body=JSON_MODE_RESPONSE_FORMAT,
 )
