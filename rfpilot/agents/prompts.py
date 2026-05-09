@@ -42,7 +42,7 @@ FIELD RULES (read carefully before extracting):
 - part_no: SI#, SKU, item reference, or catalog codes only. Never model names.
 - mfg_for_registration: the manufacturer brand name only (e.g. 'Dell', 'HP'). Not a sentence.
 - additional_documentation: list ALL required submission documents (Mercury Affidavit, Contract Affidavit, W-9, Form 1295, LOA, warranty cert, insurance, etc.) as a complete comma-separated list.
-- contact_info: always return as a JSON object with all available sub-fields. Never as a plain string.
+- contact_info: always return as a JSON object with all available sub-fields. Never as a plain string. make sure to recheck for all sub fields. 
 - contract_or_cooperative: any master contract vehicle, cooperative agreement, SBR program, or piggyback clause.
 - bid_summary: write from the procurement content, not from document metadata.
 - product_specification: include processor, RAM, storage, display specs, quantities, and any numeric requirements found.
