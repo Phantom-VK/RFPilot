@@ -16,7 +16,6 @@ from rfpilot.config.settings import settings
 from rfpilot.exception.exception import RfpilotException
 from rfpilot.logging.logger import logging
 from rfpilot.pipeline.map_reduce import (
-    AGENT_RUN_TIMEOUT_SECONDS,
     _parse_json_object,
     process_single_file,
 )
@@ -100,7 +99,7 @@ async def _consolidate_results(results: list[dict[str, Any]]) -> dict[str, Any]:
                 consolidation_agent,
                 input=json.dumps(results),
             ),
-            timeout=AGENT_RUN_TIMEOUT_SECONDS,
+            timeout=settings.AGENT_RUN_TIMEOUT_SECONDS,
         )
         return _parse_json_object(result.final_output)
     except Exception as exc:
