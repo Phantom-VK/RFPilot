@@ -35,7 +35,7 @@ SCHEMA_ANCHOR = """
 
 FIELD_GUIDANCE = """
 FIELD RULES (read carefully before extracting):
-- bid_number: capture ALL reference identifiers (BPM#, PORFP#, RFQ#, IFB#, event#). Join with ' / '.
+- bid_number: capture proper bid number identifier (BPM#, PORFP#, RFQ#, IFB#, event#). Join with ' / '.
 - due_date: the BID SUBMISSION deadline ONLY. Never put delivery dates here.
 - delivery_date: when goods must physically arrive AFTER award. Often 'within X days of award'. Never the submission date.
 - model_no: commercial product model names (e.g. 'Dell Latitude 5550'). Never SI#, SKU, or catalog codes.
