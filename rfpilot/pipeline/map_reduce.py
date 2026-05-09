@@ -18,10 +18,6 @@ from rfpilot.config.settings import settings
 from rfpilot.logging.logger import logging
 
 
-AGENT_RUN_TIMEOUT_SECONDS = 120
-MAP_CHUNK_BATCH_SIZE = 20
-
-
 def _parse_json_object(output: str) -> dict[str, Any]:
     """Parse a JSON object from model output, with a simple substring fallback."""
     try:
@@ -69,8 +65,8 @@ def _merge_partials_locally(partials: list[dict[str, Any]]) -> dict[str, Any]:
 def _chunk_batches(chunks: list[DocumentChunk]) -> list[list[DocumentChunk]]:
     """Group adjacent chunks into small map batches."""
     return [
-        chunks[index:index + MAP_CHUNK_BATCH_SIZE]
-        for index in range(0, len(chunks), MAP_CHUNK_BATCH_SIZE)
+        chunks[index:index + settings.MAP_CHUNK_BATCH_SIZE]
+        for index in range(0, len(chunks), settings.MAP_CHUNK_BATCH_SIZE)
     ]
 
 
@@ -94,7 +90,7 @@ async def _extract_chunk_batch(
                     structuring_agent,
                     input=_batch_prompt(chunks),
                 ),
-                timeout=AGENT_RUN_TIMEOUT_SECONDS,
+                timeout=settings.AGENT_RUN_TIMEOUT_SECONDS,
             )
             elapsed = time.perf_counter() - batch_start
             logging.info(
@@ -125,7 +121,7 @@ async def map_phase(
     logging.info(
         "[MapReduce] Map phase | chunks=%s | batch_size=%s | calls=%s",
         len(chunks),
-        MAP_CHUNK_BATCH_SIZE,
+        settings.MAP_CHUNK_BATCH_SIZE,
         len(batches),
     )
     map_start = time.perf_counter()
@@ -177,7 +173,7 @@ async def reduce_phase(
                 merger_agent,
                 input=json.dumps(valid_partials),
             ),
-                timeout=AGENT_RUN_TIMEOUT_SECONDS,
+                timeout=settings.AGENT_RUN_TIMEOUT_SECONDS,
             )
         reduced = _parse_json_object(result.final_output)
         elapsed = time.perf_counter() - reduce_start

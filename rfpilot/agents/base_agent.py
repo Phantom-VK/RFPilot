@@ -17,13 +17,13 @@ JSON_MODE_RESPONSE_FORMAT = {
 EXTRACTION_MODEL_SETTINGS = ModelSettings(
     temperature=0,
     top_p=1,
-    max_tokens=2500,
+    max_tokens= 768,
     extra_body=JSON_MODE_RESPONSE_FORMAT,
 )
 
 MERGE_MODEL_SETTINGS = ModelSettings(
     temperature=0,
     top_p=1,
-    max_tokens=2500,
+    max_tokens=1280,
     extra_body=JSON_MODE_RESPONSE_FORMAT,
 )

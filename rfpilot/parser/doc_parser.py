@@ -3,6 +3,7 @@
 import os
 import sys
 
+from docling.backend.docling_parse_v2_backend import DoclingParseV2DocumentBackend
 # pylint: disable=import-error
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions, RapidOcrOptions
@@ -18,16 +19,16 @@ def get_converter():
     """Create a Docling converter configured for OCR-enabled PDF and HTML parsing."""
     # PDF Configuration (OCR Enabled)
     pdf_options = PdfPipelineOptions()
-    pdf_options.do_ocr = True
-    pdf_options.ocr_options = RapidOcrOptions(
-        force_full_page_ocr=False,
-        lang=["en"]
-    )
+    pdf_options.do_ocr = False
+    pdf_options.do_table_structure = False
 
     # Converter Initialization
     return DocumentConverter(
         format_options={
-            InputFormat.PDF: PdfFormatOption(pipeline_options=pdf_options),
+            InputFormat.PDF: PdfFormatOption(
+                pipeline_options=pdf_options,
+                backend=DoclingParseV2DocumentBackend
+            ),
             InputFormat.HTML: HTMLFormatOption()
         }
     )

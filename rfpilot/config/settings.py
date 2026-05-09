@@ -15,8 +15,10 @@ class Settings(BaseSettings):
     DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY")
     DEEPSEEK_BASE_URL: str = os.getenv("DEEPSEEK_BASE_URL")
     DEEPSEEK_MODEL: str = "deepseek-v4-flash"
-    MAX_CONCURRENCY: int = 10
-    MAX_CHUNK_SIZE: int = 2000
+    AGENT_RUN_TIMEOUT_SECONDS: int = 120
+    MAX_CONCURRENCY: int = 7
+    MAX_CHUNK_SIZE: int = 1200
+    MAP_CHUNK_BATCH_SIZE: int = 15
     QA_GROUP_SIZE: int = 5
 
 settings = Settings()
