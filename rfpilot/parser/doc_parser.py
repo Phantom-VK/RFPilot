@@ -17,7 +17,7 @@ from rfpilot.utils.file_utils import save_file
 
 def get_converter():
     """Create a Docling converter configured for OCR-enabled PDF and HTML parsing."""
-    # PDF Configuration (OCR Enabled)
+    # PDF Configuration (OCR Disabled)
     pdf_options = PdfPipelineOptions()
     pdf_options.do_ocr = False
     pdf_options.do_table_structure = False
