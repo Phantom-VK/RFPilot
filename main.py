@@ -27,5 +27,5 @@ if __name__ == "__main__":
     # Disabled the commandline arguments temporary
     # args = _parse_args()
     init_llm()
-    input_dir = "docs/test_docs/Bid1"
+    input_dir = "docs/test_docs/Bid2"
     asyncio.run(run_pipeline_for_folder(input_dir))
