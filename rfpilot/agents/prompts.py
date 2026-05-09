@@ -10,7 +10,7 @@ RFP_FIELD_NAMES = [
 ## Schema anchor contains typed placeholders to tell the model both expected type and what to return when absent.
 SCHEMA_ANCHOR = """
 {
-  "bid_number":               "<string: IDs related to Bid joined with ' / ' | null>",
+  "bid_number":               "<string: Bid number IDs, separated with ' / ' | null>",
   "title":                    "<string: plain bid title, no markdown | null>",
   "due_date":                 "<string: submission deadline as written | null>",
   "bid_submission_type":      "<string: RFP / IFB / RFQ / PORFP / informal etc. | null>",
