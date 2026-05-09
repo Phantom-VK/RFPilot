@@ -17,6 +17,24 @@ def smart_rfp_chunker(
     min_chunk_size: int = 120,
     qa_group_size: int = 3,
 ) -> list[DocumentChunk]:
+    """
+    Multi-strategy chunker for RFP Markdown documents produced by Docling.
+    Handles 5 real-world RFP content structures, processed in priority order:
+      1. Fenced code blocks  (``` ... ```)          → kept intact, never split
+      2. Markdown tables     (| col | col |)         → kept intact as table_block
+      3. Numbered Q&A pairs  (1. Q ... Answer: ...)  → grouped by qa_group_size
+      4. Large prose         (> max_chunk_size)       → paragraph split with 1-para overlap
+      5. Small prose         (<= max_chunk_size)      → single chunk, merged if tiny
+    :param:
+        markdown_file:   Path to the .md file exported by Docling.
+        max_chunk_size:  Max characters per prose chunk before splitting. Default 2000.
+        min_chunk_size:  Chunks smaller than this are merged into the previous chunk. Default 100.
+        qa_group_size:   Number of Q&A items to group per chunk. Default 5.
+    :returns:
+        List of DocumentChunk objects, each with a unique chunk_index.
+    :raises:
+        RfpilotException: Wraps any IO or parsing error with file and section context.
+    """
     logging.info(
         "[Chunker] Starting | file='%s' | max_chunk_size=%s | min_chunk_size=%s | qa_group_size=%s",
         markdown_file,
