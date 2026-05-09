@@ -1,1 +1,6 @@
-"""Runnable workflows for local RFPilot smoke tests and entry points."""
+"""Runnable workflows for local RFPilot entry points."""
+
+from rfpilot.runners.pipeline_runner import run_pipeline_for_folder
+
+
+__all__ = ["run_pipeline_for_folder"]
